@@ -109,6 +109,7 @@ AVL *newAVL(
 }
 
 int findAVLcount(AVL *t, void *v) {
+    assert(t != 0);
     AVAL *temp = newAVAL(v, t->display, t->compare, t->free);
     BSTNODE *n = findBST(t->store, temp);
     freeAVAL(temp);
@@ -116,6 +117,7 @@ int findAVLcount(AVL *t, void *v) {
 }
 
 void *findAVL(AVL *t, void *v) {
+    assert(t != 0);
     AVAL *temp = newAVAL(v, t->display, t->compare, t->free);
     BSTNODE *n = findBST(t->store, temp);
     freeAVAL(temp);
