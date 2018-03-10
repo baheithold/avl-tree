@@ -101,6 +101,11 @@ int duplicatesAVL(AVL *t) {
     return t->size - sizeBST(t->store);
 }
 
+void displayAVL(AVL *t, FILE *fp) {
+    assert(t != 0);
+    displayBSTdecorated(t->store, fp);
+}
+
 void displayAVLdebug(AVL *t, FILE *fp) {
     assert(t != 0);
     displayBST(t->store, fp);
