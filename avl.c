@@ -26,6 +26,7 @@ AVAL *newAVAL(
         int (*c)(void *, void *),
         void (*f)(void *)) {
     AVAL *rv = malloc(sizeof(AVAL));
+    assert(rv != 0);
     rv->value = v;
     rv->frequency = 0;
     rv->balance = 0;
@@ -100,6 +101,7 @@ AVL *newAVL(
         int (*c)(void *, void *),
         void (*f)(void *)) {
     AVL *rv = malloc(sizeof(AVL));
+    assert(rv != 0);
     rv->store = newBST(adisplay, compareAVAL, 0, freeAVAL);
     rv->size = 0;
     rv->display = d;
