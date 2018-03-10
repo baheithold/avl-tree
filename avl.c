@@ -31,7 +31,7 @@ AVAL *newAVAL(
     AVAL *rv = malloc(sizeof(AVAL));
     assert(rv != 0);
     rv->value = v;
-    rv->count = 0;
+    rv->count = 1;
     rv->balance = 0;
     rv->leftHeight = 0;
     rv->rightHeight = 0;
@@ -71,9 +71,12 @@ int getAVALbalance(AVAL *av) {
     return av->balance;
 }
 
-void setAVALbalance(AVAL *av, int b) {
+void setAVALbalance(AVAL *av, int lh, int rh) {
     assert(av != 0);
-    av->balance = b;
+    av->leftHeight = lh;
+    av->rightHeight = rh;
+    av->height = lh > rh ? lh + 1: rh + 1;
+    av->balance = lh - rh;
 }
 
 void adisplay(void *v, FILE *fp) {
@@ -98,6 +101,9 @@ void freeAVAL(void *v) {
 void insertionFixup(AVL *, BSTNODE *);
 int isRoot(AVL *, BSTNODE *);
 void swapper(BSTNODE *, BSTNODE *);
+int height(BSTNODE *);
+BSTNODE *sibling(BSTNODE *);
+BSTNODE *favoriteChild(BSTNODE *);
 
 
 struct AVL {
@@ -133,7 +139,6 @@ void insertAVL(AVL *t, void *v) {
     if (n == NULL) {
         // Tree does not contain value
         insertBST(t->store, temp);
-        incrementAVALcount(temp);
     }
     else {
         // Tree already contains the value
@@ -194,8 +199,43 @@ void freeAVL(AVL *t) {
 /*************************** Private methods ***************************/
 
 void insertionFixup(AVL *t, BSTNODE *n) {
-    while (1) {
-        if (t->isRoot(t, n)) break;
+    while (!t->isRoot(t, n)) {
+        if (sibling(n) == favoriteChild(getBSTNODEparent(n))) {
+            // Parent favors sibling
+            // Set balance of parent and exit loop
+            BSTNODE *p = getBSTNODEparent(n);
+            int lh = height(getBSTNODEvalue(getBSTNODEleft(p)));
+            int rh = height(getBSTNODEvalue(getBSTNODEright(p)));
+            setAVALbalance(getBSTNODEvalue(getBSTNODEparent(n)), lh, rh);
+            break;
+        }
+        else if (favoriteChild(getBSTNODEparent(n)) == NULL) {
+            // Parent is balanced
+            BSTNODE *p = getBSTNODEparent(n);
+            int lh = height(getBSTNODEvalue(getBSTNODEleft(p)));
+            int rh = height(getBSTNODEvalue(getBSTNODEright(p)));
+            setAVALbalance(getBSTNODEvalue(getBSTNODEparent(n)), lh, rh);
+            n = p;
+        }
+        else {
+            BSTNODE *y = favoriteChild(n);
+            BSTNODE *p = getBSTNODEparent(n);
+            if (1) { // TODO: if y exists and y,n,p are not linear
+                // TODO:
+                // rotate y to x
+                // rotate y to p
+                // set balance of n
+                // set balance of p
+                // set balance of y
+            }
+            else {
+                // TODO:
+                // rotate n to p
+                // set balance of p
+                // set balance of n
+            }
+            break;
+        }
     }
 }
 
@@ -228,4 +268,18 @@ BSTNODE *sibling(BSTNODE *n) {
     if (parent == NULL) return NULL;
     else if (getBSTNODEleft(parent) == n) return getBSTNODEright(parent);
     else return getBSTNODEleft(parent);
+}
+
+BSTNODE *favoriteChild(BSTNODE *p) {
+    assert(p != 0);
+    if (getAVALbalance(getBSTNODEvalue(p)) == 1) {
+        // Left child is favorite
+        return getBSTNODEleft(p);
+    }
+    else if (getAVALbalance(getBSTNODEvalue(p)) == -1) {
+        // Right child is favorite
+        return getBSTNODEright(p);
+    }
+    // Balance == 0, neither child is favored
+    return NULL;
 }
