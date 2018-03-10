@@ -100,3 +100,9 @@ int duplicatesAVL(AVL *t) {
     assert(t != 0);
     return t->size - sizeBST(t->store);
 }
+
+void freeAVL(AVL *t) {
+    assert(t != 0);
+    freeBST(t->store);
+    free(t);
+}
