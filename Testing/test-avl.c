@@ -11,6 +11,7 @@
 
 
 int main(void) {
-
+    AVL *t = newAVL(displayINTEGER, compareINTEGER, freeINTEGER);
+    freeAVL(t);
     return 0;
 }

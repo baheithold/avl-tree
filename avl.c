@@ -101,6 +101,11 @@ int duplicatesAVL(AVL *t) {
     return t->size - sizeBST(t->store);
 }
 
+void displayAVLdebug(AVL *t, FILE *fp) {
+    assert(t != 0);
+    displayBST(t->store, fp);
+}
+
 void freeAVL(AVL *t) {
     assert(t != 0);
     freeBST(t->store);
