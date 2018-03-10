@@ -90,3 +90,13 @@ AVL *newAVL(
     rv->free = f;
     return rv;
 }
+
+int sizeAVL(AVL *t) {
+    assert(t != 0);
+    return t->size;
+}
+
+int duplicatesAVL(AVL *t) {
+    assert(t != 0);
+    return t->size - sizeBST(t->store);
+}
