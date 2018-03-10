@@ -6,11 +6,12 @@
 
 
 #include "avl.h"
+#include "bst.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 
-typedef struct AVAL {
+typedef struct aval {
     void *value;
     int frequency;
     int balance;
@@ -66,4 +67,26 @@ int balanceAVAL(AVAL *av) {
 void setAVALbalance(AVAL *av, int b) {
     assert(av != 0);
     av->balance = b;
+}
+
+
+struct AVL {
+    BST *store;
+    int size;
+    void (*display)(void *, FILE *);
+    int (*compare)(void *, void *);
+    void (*free)(void *);
+};
+
+AVL *newAVL(
+        void (*d)(void *, FILE *),
+        int (*c)(void *, void *),
+        void (*f)(void *)) {
+    AVL *rv = malloc(sizeof(AVL));
+    rv->store = newBST(d, c, 0, f);
+    rv->size = 0;
+    rv->display = d;
+    rv->compare = c;
+    rv->free = f;
+    return rv;
 }
