@@ -35,7 +35,7 @@ AVAL *newAVAL(
     rv->balance = 0;
     rv->leftHeight = 0;
     rv->rightHeight = 0;
-    rv->height = 0;
+    rv->height = 1;
     rv->display = d;
     rv->compare = c;
     rv->free = f;
@@ -94,7 +94,8 @@ void freeAVAL(void *v) {
 }
 
 
-/* Private AVL method prototypes */
+/********** Private AVL method prototypes **********/
+int isRoot(AVL *, BSTNODE *);
 void swapper(BSTNODE *, BSTNODE *);
 
 
@@ -104,6 +105,7 @@ struct AVL {
     void (*display)(void *, FILE *);
     int (*compare)(void *, void *);
     void (*free)(void *);
+    int (*isRoot)(AVL *, BSTNODE *);
 };
 
 AVL *newAVL(
@@ -117,6 +119,7 @@ AVL *newAVL(
     rv->display = d;
     rv->compare = c;
     rv->free = f;
+    rv->isRoot = isRoot;
     return rv;
 }
 
@@ -187,6 +190,11 @@ void freeAVL(AVL *t) {
 
 /*************************** Private methods ***************************/
 
+int isRoot(AVL *t, BSTNODE *n) {
+    assert(t != 0);
+    return n == getBSTroot(t->store) ? 1 : 0;
+}
+
 void swapper(BSTNODE *a, BSTNODE *b) {
     AVAL *ta = getBSTNODEvalue(a);
     AVAL *tb = getBSTNODEvalue(b);
@@ -196,4 +204,11 @@ void swapper(BSTNODE *a, BSTNODE *b) {
     int ctemp = ta->count;
     ta->count = tb->count;
     tb->count = ctemp;
+}
+
+int height(BSTNODE *n) {
+    if (n == NULL) return 0;
+    int leftHeight = height(getBSTNODEleft(n));
+    int rightHeight = height(getBSTNODEright(n));
+    return leftHeight > rightHeight ? leftHeight + 1 : rightHeight + 1;
 }
