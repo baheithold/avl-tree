@@ -69,6 +69,23 @@ void setAVALbalance(AVAL *av, int b) {
     av->balance = b;
 }
 
+void adisplay(void *v, FILE *fp) {
+    // TODO: Add balance decoration!
+    assert(v != 0);
+    ((AVAL *) v)->display(getAVALvalue((AVAL *)v), fp);
+    int freq = frequencyAVAL((AVAL *)v);
+    if (freq > 1) fprintf(fp, "[%d]", freq);
+}
+
+int compareAVAL(void *v, void *w) {
+    return (((AVAL *)v)->compare(getAVALvalue(v), getAVALvalue(w)));
+}
+
+void freeAVAL(void *v) {
+    ((AVAL *)v)->free(getAVALvalue(v));
+    free(v);
+}
+
 
 struct AVL {
     BST *store;
@@ -83,12 +100,26 @@ AVL *newAVL(
         int (*c)(void *, void *),
         void (*f)(void *)) {
     AVL *rv = malloc(sizeof(AVL));
-    rv->store = newBST(d, c, 0, f);
+    rv->store = newBST(adisplay, compareAVAL, 0, freeAVAL);
     rv->size = 0;
     rv->display = d;
     rv->compare = c;
     rv->free = f;
     return rv;
+}
+
+int findAVLcount(AVL *t, void *v) {
+    AVAL *temp = newAVAL(v, t->display, t->compare, t->free);
+    BSTNODE *n = findBST(t->store, temp);
+    freeAVAL(temp);
+    return n == NULL ? 0 : frequencyAVAL(getBSTNODEvalue(n));
+}
+
+void *findAVL(AVL *t, void *v) {
+    AVAL *temp = newAVAL(v, t->display, t->compare, t->free);
+    BSTNODE *n = findBST(t->store, temp);
+    freeAVAL(temp);
+    return n == NULL ? NULL : v;
 }
 
 int sizeAVL(AVL *t) {
@@ -99,6 +130,11 @@ int sizeAVL(AVL *t) {
 int duplicatesAVL(AVL *t) {
     assert(t != 0);
     return t->size - sizeBST(t->store);
+}
+
+void statisticsAVL(AVL *t, FILE *fp) {
+    fprintf(fp, "Duplicates: %d\n", duplicatesAVL(t));
+    statisticsBST(t->store, fp);
 }
 
 void displayAVL(AVL *t, FILE *fp) {

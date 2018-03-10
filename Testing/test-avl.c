@@ -12,6 +12,8 @@
 
 int main(void) {
     AVL *t = newAVL(displayINTEGER, compareINTEGER, freeINTEGER);
+    statisticsAVL(t, stdout);
+    displayAVL(t, stdout);
     freeAVL(t);
     return 0;
 }
