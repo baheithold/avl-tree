@@ -104,6 +104,7 @@ void swapper(BSTNODE *, BSTNODE *);
 int height(BSTNODE *);
 BSTNODE *sibling(BSTNODE *);
 BSTNODE *favoriteChild(BSTNODE *);
+int linear(BSTNODE *c, BSTNODE *p, BSTNODE *gp);
 
 
 struct AVL {
@@ -202,7 +203,6 @@ void insertionFixup(AVL *t, BSTNODE *n) {
     while (!t->isRoot(t, n)) {
         if (sibling(n) == favoriteChild(getBSTNODEparent(n))) {
             // Parent favors sibling
-            // Set balance of parent and exit loop
             BSTNODE *p = getBSTNODEparent(n);
             int lh = height(getBSTNODEvalue(getBSTNODEleft(p)));
             int rh = height(getBSTNODEvalue(getBSTNODEright(p)));
@@ -212,27 +212,42 @@ void insertionFixup(AVL *t, BSTNODE *n) {
         else if (favoriteChild(getBSTNODEparent(n)) == NULL) {
             // Parent is balanced
             BSTNODE *p = getBSTNODEparent(n);
-            int lh = height(getBSTNODEvalue(getBSTNODEleft(p)));
-            int rh = height(getBSTNODEvalue(getBSTNODEright(p)));
+            int lh = height(getBSTNODEleft(p));
+            int rh = height(getBSTNODEright(p));
             setAVALbalance(getBSTNODEvalue(getBSTNODEparent(n)), lh, rh);
             n = p;
         }
         else {
             BSTNODE *y = favoriteChild(n);
             BSTNODE *p = getBSTNODEparent(n);
-            if (1) { // TODO: if y exists and y,n,p are not linear
+            if (y && !linear(y, n, p)) {
                 // TODO:
                 // rotate y to x
                 // rotate y to p
                 // set balance of n
+                int lh = height(getBSTNODEleft(n));
+                int rh = height(getBSTNODEright(n));
+                setAVALbalance(getBSTNODEvalue(n), lh, rh);
                 // set balance of p
+                lh = height(getBSTNODEleft(p));
+                rh = height(getBSTNODEright(p));
+                setAVALbalance(getBSTNODEvalue(p), lh, rh);
                 // set balance of y
+                lh = height(getBSTNODEleft(y));
+                rh = height(getBSTNODEright(y));
+                setAVALbalance(getBSTNODEvalue(y), lh, rh);
             }
             else {
                 // TODO:
                 // rotate n to p
                 // set balance of p
+                int lh = height(getBSTNODEleft(p));
+                int rh = height(getBSTNODEright(p));
+                setAVALbalance(getBSTNODEvalue(p), lh, rh);
                 // set balance of n
+                lh = height(getBSTNODEleft(n));
+                rh = height(getBSTNODEright(n));
+                setAVALbalance(getBSTNODEvalue(n), lh, rh);
             }
             break;
         }
@@ -262,11 +277,11 @@ int height(BSTNODE *n) {
     return leftHeight > rightHeight ? leftHeight + 1 : rightHeight + 1;
 }
 
-BSTNODE *sibling(BSTNODE *n) {
-    assert(n != 0);
-    BSTNODE *parent = getBSTNODEparent(n);
+BSTNODE *sibling(BSTNODE *c) {
+    assert(c != 0);
+    BSTNODE *parent = getBSTNODEparent(c);
     if (parent == NULL) return NULL;
-    else if (getBSTNODEleft(parent) == n) return getBSTNODEright(parent);
+    else if (getBSTNODEleft(parent) == c) return getBSTNODEright(parent);
     else return getBSTNODEleft(parent);
 }
 
@@ -282,4 +297,10 @@ BSTNODE *favoriteChild(BSTNODE *p) {
     }
     // Balance == 0, neither child is favored
     return NULL;
+}
+
+int linear(BSTNODE *c, BSTNODE *p, BSTNODE *gp) {
+    int leftLinear = getBSTNODEleft(gp) == p && getBSTNODEleft(p) == c;
+    int rightLinear = getBSTNODEright(gp) == p && getBSTNODEright(p) == c;
+    return leftLinear || rightLinear;
 }
