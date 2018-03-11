@@ -99,6 +99,7 @@ void freeAVAL(void *v) {
 
 /********** Private AVL method prototypes **********/
 void insertionFixup(AVL *, BSTNODE *);
+void rotateTo(AVL *, BSTNODE *, BSTNODE *);
 int isRoot(AVL *, BSTNODE *);
 void swapper(BSTNODE *, BSTNODE *);
 int height(BSTNODE *);
@@ -114,6 +115,7 @@ struct AVL {
     int (*compare)(void *, void *);
     void (*free)(void *);
     void (*insertionFixup)(AVL *, BSTNODE *);
+    void (*rotateTo)(AVL *, BSTNODE *, BSTNODE *);
     int (*isRoot)(AVL *, BSTNODE *);
 };
 
@@ -129,6 +131,7 @@ AVL *newAVL(
     rv->compare = c;
     rv->free = f;
     rv->insertionFixup = insertionFixup;
+    rv->rotateTo = rotateTo;
     rv->isRoot = isRoot;
     return rv;
 }
@@ -139,7 +142,8 @@ void insertAVL(AVL *t, void *v) {
     BSTNODE *n = findBST(t->store, temp);
     if (n == NULL) {
         // Tree does not contain value
-        insertBST(t->store, temp);
+        n = insertBST(t->store, temp);
+        t->insertionFixup(t, n);
     }
     else {
         // Tree already contains the value
@@ -201,11 +205,11 @@ void freeAVL(AVL *t) {
 
 void insertionFixup(AVL *t, BSTNODE *n) {
     while (!t->isRoot(t, n)) {
-        if (sibling(n) == favoriteChild(getBSTNODEparent(n))) {
+        if (sibling(n) && sibling(n) == favoriteChild(getBSTNODEparent(n))) {
             // Parent favors sibling
             BSTNODE *p = getBSTNODEparent(n);
-            int lh = height(getBSTNODEvalue(getBSTNODEleft(p)));
-            int rh = height(getBSTNODEvalue(getBSTNODEright(p)));
+            int lh = height(getBSTNODEleft(p));
+            int rh = height(getBSTNODEright(p));
             setAVALbalance(getBSTNODEvalue(getBSTNODEparent(n)), lh, rh);
             break;
         }
@@ -221,9 +225,8 @@ void insertionFixup(AVL *t, BSTNODE *n) {
             BSTNODE *y = favoriteChild(n);
             BSTNODE *p = getBSTNODEparent(n);
             if (y && !linear(y, n, p)) {
-                // TODO:
-                // rotate y to x
-                // rotate y to p
+                t->rotateTo(t, y, n);
+                t->rotateTo(t, y, p);
                 // set balance of n
                 int lh = height(getBSTNODEleft(n));
                 int rh = height(getBSTNODEright(n));
@@ -238,8 +241,7 @@ void insertionFixup(AVL *t, BSTNODE *n) {
                 setAVALbalance(getBSTNODEvalue(y), lh, rh);
             }
             else {
-                // TODO:
-                // rotate n to p
+                t->rotateTo(t, n, p);
                 // set balance of p
                 int lh = height(getBSTNODEleft(p));
                 int rh = height(getBSTNODEright(p));
@@ -252,6 +254,30 @@ void insertionFixup(AVL *t, BSTNODE *n) {
             break;
         }
     }
+}
+
+void rotateTo(AVL *t, BSTNODE *c, BSTNODE *p) {
+    if (c == getBSTNODEleft(p)) {
+        // c is left child of p, p becomes right child of c
+        setBSTNODEparent(c, getBSTNODEparent(p));
+        setBSTNODEright(c, p);
+        setBSTNODEleft(p, 0);
+        if (getBSTNODEparent(p) != NULL) {
+            setBSTNODEleft(getBSTNODEparent(p), c);
+        }
+        setBSTNODEparent(p, c);
+    }
+    else {
+        // c is right child of p, p becomes left child of c
+        setBSTNODEparent(c, getBSTNODEparent(p));
+        setBSTNODEleft(c, p);
+        setBSTNODEright(p, 0);
+        if (getBSTNODEparent(p) != NULL) {
+            setBSTNODEright(getBSTNODEparent(p), c);
+        }
+        setBSTNODEparent(p, c);
+    }
+    if (t->isRoot(t, p)) setBSTroot(t->store, c);
 }
 
 int isRoot(AVL *t, BSTNODE *n) {
