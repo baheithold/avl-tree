@@ -186,7 +186,10 @@ void statisticsAVL(AVL *t, FILE *fp) {
 
 void displayAVL(AVL *t, FILE *fp) {
     assert(t != 0);
-    displayBSTdecorated(t->store, fp);
+    if (t->size > 0) {
+        displayBSTdecorated(t->store, fp);
+    }
+    fprintf(fp, "EMPTY\n");
 }
 
 void displayAVLdebug(AVL *t, FILE *fp) {
