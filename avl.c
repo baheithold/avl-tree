@@ -169,6 +169,26 @@ void *findAVL(AVL *t, void *v) {
     return n == NULL ? NULL : v;
 }
 
+void *deleteAVL(AVL *t, void *v) {
+    AVAL *temp = newAVAL(v, t->display, t->compare, t->free);
+    BSTNODE *n = findBST(t->store, temp);
+    void *rv = NULL;
+    if (n == NULL) {
+        // TODO
+        // Value not found in tree
+    }
+    else {
+        if (getAVALcount(getBSTNODEvalue(n)) > 1) {
+            decrementAVALcount(getBSTNODEvalue(n));
+            rv = getBSTNODEvalue(n);
+        }
+        else {
+            // TODO
+        }
+    }
+    return rv;
+}
+
 int sizeAVL(AVL *t) {
     assert(t != 0);
     return t->size;
