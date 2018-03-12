@@ -200,11 +200,13 @@ void *deleteAVL(AVL *t, void *v) {
             BSTNODE *leaf = swapToLeafBST(t->store, n);
             t->deletionFixUp(t, leaf);
             setBSTsize(t->store, sizeBST(t->store) - 1);
-            pruneLeafBST(t->store, leaf);
             rv = getAVALvalue(getBSTNODEvalue(leaf));
+            pruneLeafBST(t->store, leaf);
+            freeBSTNODE(leaf, t->free);
         }
         t->size--;
     }
+    freeAVAL(temp);
     return rv;
 }
 
