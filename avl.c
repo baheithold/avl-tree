@@ -189,7 +189,9 @@ void displayAVL(AVL *t, FILE *fp) {
     if (t->size > 0) {
         displayBSTdecorated(t->store, fp);
     }
-    fprintf(fp, "EMPTY\n");
+    else {
+        fprintf(fp, "EMPTY\n");
+    }
 }
 
 void displayAVLdebug(AVL *t, FILE *fp) {
