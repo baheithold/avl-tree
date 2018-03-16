@@ -88,11 +88,13 @@ void setAVALbalance(AVAL *av, int lh, int rh) {
 }
 
 void adisplay(void *v, FILE *fp) {
-    // TODO: Add balance decoration!
     assert(v != 0);
     ((AVAL *) v)->display(getAVALvalue((AVAL *)v), fp);
     int count = getAVALcount((AVAL *)v);
     if (count > 1) fprintf(fp, "[%d]", count);
+    int bal = getAVALbalance((AVAL *) v);
+    if (bal == 1) fprintf(fp, "+");
+    else if (bal == -1) fprintf(fp, "-");
 }
 
 int compareAVAL(void *v, void *w) {
