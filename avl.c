@@ -202,7 +202,7 @@ void *deleteAVL(AVL *t, void *v) {
         else {
             // Value found, no duplicates
             BSTNODE *leaf = swapToLeafBST(t->store, n);
-            setAVALbalance(getBSTNODEvalue(leaf), 0);
+            setBalance(leaf);
             t->deletionFixUp(t, leaf);
             setBSTsize(t->store, sizeBST(t->store) - 1);
             rv = getAVALvalue(getBSTNODEvalue(leaf));
@@ -234,12 +234,7 @@ void statisticsAVL(AVL *t, FILE *fp) {
 
 void displayAVL(AVL *t, FILE *fp) {
     assert(t != 0);
-    if (t->size > 0) {
-        displayBSTdecorated(t->store, fp);
-    }
-    else {
-        fprintf(fp, "EMPTY\n");
-    }
+    displayBSTdecorated(t->store, fp);
 }
 
 void displayAVLdebug(AVL *t, FILE *fp) {
