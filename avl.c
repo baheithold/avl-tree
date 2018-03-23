@@ -335,28 +335,48 @@ void deletionFixUp(AVL *t, BSTNODE *x) {
     }
 }
 
-void rotateTo(AVL *t, BSTNODE *c, BSTNODE *p) {
-    if (c == getBSTNODEleft(p)) {
-        // c is left child of p, p becomes right child of c
-        setBSTNODEparent(c, getBSTNODEparent(p));
-        setBSTNODEright(c, p);
-        setBSTNODEleft(p, 0);
-        if (getBSTNODEparent(p) != NULL) {
-            setBSTNODEleft(getBSTNODEparent(p), c);
+void rotateTo(AVL *t, BSTNODE *y, BSTNODE *x) {
+    // TODO: Am I Correct?
+    int rootNeedsUpdating = 0;
+    if (t->isRoot(t, x)) rootNeedsUpdating = 1;
+    if (y == getBSTNODEleft(x)) {
+        // Right rotation
+        setBSTNODEleft(x, getBSTNODEright(y));
+        if (getBSTNODEright(y) != NULL) {
+            setBSTNODEparent(getBSTNODEright(y), x);
         }
-        setBSTNODEparent(p, c);
+        if (rootNeedsUpdating) {
+            setBSTNODEparent(y, y);
+            setBSTroot(t->store, y);
+        }
+        else if (x == getBSTNODEright(getBSTNODEparent(x))) {
+            setBSTNODEright(getBSTNODEparent(x), y);
+        }
+        else {
+            setBSTNODEleft(getBSTNODEparent(x), y);
+        }
+        setBSTNODEright(y, x);
+        setBSTNODEparent(x, y);
     }
     else {
-        // c is right child of p, p becomes left child of c
-        setBSTNODEparent(c, getBSTNODEparent(p));
-        setBSTNODEleft(c, p);
-        setBSTNODEright(p, 0);
-        if (getBSTNODEparent(p) != NULL) {
-            setBSTNODEright(getBSTNODEparent(p), c);
+        // Left rotation
+        setBSTNODEright(x, getBSTNODEleft(y));
+        if (getBSTNODEleft(y) != NULL) {
+            setBSTNODEparent(getBSTNODEleft(y), x);
         }
-        setBSTNODEparent(p, c);
+        if (rootNeedsUpdating) {
+            setBSTNODEparent(y, y);
+            setBSTroot(t->store, y);
+        }
+        else if (x == getBSTNODEleft(getBSTNODEparent(x))) {
+            setBSTNODEleft(getBSTNODEparent(x), y);
+        }
+        else {
+            setBSTNODEright(getBSTNODEparent(x), y);
+        }
+        setBSTNODEleft(y, x);
+        setBSTNODEparent(x, y);
     }
-    if (t->isRoot(t, p)) setBSTroot(t->store, c);
 }
 
 int isRoot(AVL *t, BSTNODE *n) {
