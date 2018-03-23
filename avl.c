@@ -102,7 +102,10 @@ int compareAVAL(void *v, void *w) {
 }
 
 void freeAVAL(void *v) {
-    ((AVAL *)v)->free(getAVALvalue(v));
+    assert(v != 0);
+    if (((AVAL *)v)->free != NULL) {
+        ((AVAL *)v)->free(getAVALvalue(v));
+    }
     free(v);
 }
 
@@ -168,7 +171,7 @@ void insertAVL(AVL *t, void *v) {
 
 int findAVLcount(AVL *t, void *v) {
     assert(t != 0);
-    AVAL *temp = newAVAL(v, t->display, t->compare, t->free);
+    AVAL *temp = newAVAL(v, t->display, t->compare, NULL);
     BSTNODE *n = findBST(t->store, temp);
     freeAVAL(temp);
     return n == NULL ? 0 : getAVALcount(getBSTNODEvalue(n));
@@ -176,15 +179,15 @@ int findAVLcount(AVL *t, void *v) {
 
 void *findAVL(AVL *t, void *v) {
     assert(t != 0);
-    AVAL *temp = newAVAL(v, t->display, t->compare, t->free);
+    AVAL *temp = newAVAL(v, NULL, t->compare, NULL);
     BSTNODE *n = findBST(t->store, temp);
     freeAVAL(temp);
-    return n == NULL ? NULL : v;
+    return n == NULL ? NULL : getAVALvalue(getBSTNODEvalue(n));
 }
 
 void *deleteAVL(AVL *t, void *v) {
     void *rv = NULL;
-    AVAL *temp = newAVAL(v, t->display, t->compare, t->free);
+    AVAL *temp = newAVAL(v, t->display, t->compare, NULL);
     BSTNODE *n = findBST(t->store, temp);
     if (n == NULL) {
         // Value not found in tree
@@ -202,7 +205,8 @@ void *deleteAVL(AVL *t, void *v) {
             setBSTsize(t->store, sizeBST(t->store) - 1);
             rv = getAVALvalue(getBSTNODEvalue(leaf));
             pruneLeafBST(t->store, leaf);
-            freeBSTNODE(leaf, t->free);
+            free((AVAL *) getBSTNODEvalue(n));
+            freeBSTNODE(leaf, NULL);
         }
         t->size--;
     }
