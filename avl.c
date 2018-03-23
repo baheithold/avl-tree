@@ -394,7 +394,7 @@ void setBalance(BSTNODE *n) {
     int rh = height(getBSTNODEright(n));
     av->leftHeight = lh;
     av->rightHeight = rh;
-    setAVALbalance(av, (lh > rh) ? lh + 1 : rh + 1);
+    av->height = lh > rh ? lh + 1 : rh + 1;
 }
 
 int getBalance(BSTNODE *n) {
@@ -412,11 +412,11 @@ BSTNODE *sibling(BSTNODE *c) {
 
 BSTNODE *favoriteChild(BSTNODE *p) {
     assert(p != 0);
-    if (getAVALbalance(getBSTNODEvalue(p)) == 1) {
+    if (getBalance(p) == 1) {
         // Left child is favorite
         return getBSTNODEleft(p);
     }
-    else if (getAVALbalance(getBSTNODEvalue(p)) == -1) {
+    else if (getBalance(p) == -1) {
         // Right child is favorite
         return getBSTNODEright(p);
     }
