@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../integer.h"
-#include "../bst.h"
-#include "../avl.h"
+#include "integer.h"
+#include "real.h"
+#include "string.h"
+#include "queue.h"
+#include "bst.h"
+#include "avl.h"
 
 void srandom(unsigned int);
 long int random(void);
@@ -10,23 +13,24 @@ long int random(void);
 int
 main(void)
     {
-    srandom(1);
-    //simple INTEGER test of AVL
-    AVL *p = newAVL(displayINTEGER,compareINTEGER,freeINTEGER);
-    insertAVL(p,newINTEGER(3));
-    insertAVL(p,newINTEGER(2));
+    srandom(42);
+    //simple REAL test of AVL
+    AVL *p = newAVL(displayREAL,compareREAL,freeREAL);
+    insertAVL(p,newREAL(2));
+    insertAVL(p,newREAL(3));
+    insertAVL(p,newREAL(1));
     statisticsAVL(p,stdout);
     printf("AVL:\n");
     displayAVL(p,stdout);
     printf("debug: ");
     displayAVLdebug(p,stdout);
     printf("\n");
-    INTEGER *q = newINTEGER(2);
+    REAL *q = newREAL(2);
     printf("is ");
-    displayINTEGER(q,stdout);
+    displayREAL(q,stdout);
     printf(" present? %s\n",findAVL(p,q) == 0? "no" : "yes");
-    INTEGER *r = newINTEGER(3);
-    freeINTEGER(deleteAVL(p,r));
+    REAL *r = newREAL(3);
+    freeREAL(deleteAVL(p,r));
     statisticsAVL(p,stdout);
     printf("AVL:\n");
     displayAVL(p,stdout);
@@ -34,10 +38,10 @@ main(void)
     displayAVLdebug(p,stdout);
     printf("\n");
     printf("is ");
-    displayINTEGER(q,stdout);
+    displayREAL(q,stdout);
     printf(" present? %s\n",findAVL(p,q) == 0? "no" : "yes");
-    setINTEGER(r,2);
-    freeINTEGER(deleteAVL(p,r));
+    setREAL(r,2);
+    freeREAL(deleteAVL(p,r));
     statisticsAVL(p,stdout);
     printf("AVL:\n");
     displayAVL(p,stdout);
@@ -45,11 +49,11 @@ main(void)
     displayAVLdebug(p,stdout);
     printf("\n");
     printf("is ");
-    displayINTEGER(q,stdout);
+    displayREAL(q,stdout);
     printf(" present? %s\n",findAVL(p,q) == 0? "no" : "yes");
     printf("size: %d\n",sizeAVL(p));
-    freeINTEGER(q);
-    freeINTEGER(r);
+    freeREAL(q);
+    freeREAL(r);
     freeAVL(p);
     return 0;
     }
