@@ -336,7 +336,6 @@ void deletionFixUp(AVL *t, BSTNODE *x) {
 }
 
 void rotateTo(AVL *t, BSTNODE *y, BSTNODE *x) {
-    // TODO: Am I Correct?
     int rootNeedsUpdating = 0;
     if (t->isRoot(t, x)) rootNeedsUpdating = 1;
     if (y == getBSTNODEleft(x)) {
@@ -345,6 +344,7 @@ void rotateTo(AVL *t, BSTNODE *y, BSTNODE *x) {
         if (getBSTNODEright(y) != NULL) {
             setBSTNODEparent(getBSTNODEright(y), x);
         }
+        setBSTNODEparent(y, getBSTNODEparent(x));
         if (rootNeedsUpdating) {
             setBSTNODEparent(y, y);
             setBSTroot(t->store, y);

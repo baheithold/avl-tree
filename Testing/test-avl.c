@@ -19,11 +19,13 @@ int main(void) {
     insertAVL(t, newINTEGER(6));
     insertAVL(t, newINTEGER(8));
     insertAVL(t, newINTEGER(1));
+    displayAVL(t, stdout);
     INTEGER *r = newINTEGER(7);
-    r = deleteAVL(t, r);
-    freeINTEGER(r);
+    freeINTEGER(deleteAVL(t, r));
     statisticsAVL(t, stdout);
     displayAVL(t, stdout);
+    /*
     freeAVL(t);
+    */
     return 0;
 }
