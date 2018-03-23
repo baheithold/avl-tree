@@ -188,9 +188,7 @@ void *deleteAVL(AVL *t, void *v) {
     BSTNODE *n = findBST(t->store, temp);
     if (n == NULL) {
         // Value not found in tree
-        printf("Value ");
-        t->display(v, stdout);
-        printf(" not found\n");
+        return NULL;
     }
     else {
         if (getAVALcount(getBSTNODEvalue(n)) > 1) {
