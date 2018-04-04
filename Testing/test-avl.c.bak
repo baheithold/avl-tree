@@ -1,0 +1,44 @@
+/*
+ *  File:   test-avl.c
+ *  Author: Brett Heithold
+ *  Description:
+ */
+
+
+#include "../avl.h"
+#include "../integer.h"
+#include <stdio.h>
+
+
+int main(void) {
+    AVL *t = newAVL(displayINTEGER, compareINTEGER, freeINTEGER);
+    insertAVL(t, newINTEGER(7));
+    insertAVL(t, newINTEGER(11));
+    insertAVL(t, newINTEGER(12));
+    insertAVL(t, newINTEGER(0));
+    insertAVL(t, newINTEGER(2));
+    insertAVL(t, newINTEGER(6));
+    insertAVL(t, newINTEGER(4));
+    insertAVL(t, newINTEGER(8));
+    insertAVL(t, newINTEGER(0));
+    insertAVL(t, newINTEGER(8));
+    insertAVL(t, newINTEGER(3));
+    insertAVL(t, newINTEGER(3));
+    insertAVL(t, newINTEGER(9));
+    deleteAVL(t, newINTEGER(6));
+    deleteAVL(t, newINTEGER(8));
+    deleteAVL(t, newINTEGER(2));
+    deleteAVL(t, newINTEGER(12));
+    deleteAVL(t, newINTEGER(1));
+    deleteAVL(t, newINTEGER(0));
+    deleteAVL(t, newINTEGER(10));
+    deleteAVL(t, newINTEGER(10));
+    deleteAVL(t, newINTEGER(10));
+    deleteAVL(t, newINTEGER(6));
+    deleteAVL(t, newINTEGER(3));
+    deleteAVL(t, newINTEGER(5));
+    deleteAVL(t, newINTEGER(6));
+    displayAVL(t, stdout);
+    freeAVL(t);
+    return 0;
+}
